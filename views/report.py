@@ -396,9 +396,7 @@ try:
 
 	# st.divider()
 
-	
 
-	st.write("#### Activity: Science of Feel - Fabric Hero Elements")
 
 	### # filter skill
 	if skill == 'All':
