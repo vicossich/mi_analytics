@@ -205,23 +205,23 @@ try:
 			st.markdown('<p style="font-size:20px; font-weight:bold;">Select Columns to Include in CSV</p>', unsafe_allow_html=True)
 
 
-			# # Custom gray message box using Markdown
-			# st.markdown(
-			# 	"""
-			# 	<div style="
-			# 		padding: 10px;
-			# 		background-color: #f7f7f7;
-			# 		border-radius: 5px;
-			# 		color: #333;margin-bottom:20px">
-			# 		<ul style="margin-bottom:0px;font-size:5px;">
-			# 			<li>You can download the dataset while keeping the applied filters. Additionally, you can select which columns (variables) you want to include in the final file.</li>
-			# 		</ul>
-			# 	</div>
-			# 	""",
-			# 	unsafe_allow_html=True
-			# )
+			# Custom gray message box using Markdown
+			st.markdown(
+				"""
+				<div style="
+					padding: 10px;
+					background-color: #f7f7f7;
+					border-radius: 5px;
+					color: #333;margin-bottom:20px">
+					<ul style="margin-bottom:0px;font-size:5px;">
+						<li>You can download the dataset while keeping the applied filters. Additionally, you can select which columns (variables) you want to include in the final file.</li>
+					</ul>
+				</div>
+				""",
+				unsafe_allow_html=True
+			)
 
-			st.warning("You can download the dataset while keeping the applied filters. Additionally, you can select which columns (variables) you want to include in the final file.")
+			# st.warning("You can download the dataset while keeping the applied filters. Additionally, you can select which columns (variables) you want to include in the final file.")
 			
 			# Criar 5 colunas para distribuir os checkboxes
 			columns = st.columns(5)  
@@ -301,6 +301,26 @@ try:
 			# Filter widgets
 			st.write("### Quick Look")
 			
+			st.markdown(
+		    """
+		    <div style="
+		        padding: 10px;
+		        background-color: #f7f7f7;
+		        border-radius: 5px;
+		        color: #333;margin-bottom:20px">
+		        <ul style="margin-bottom:0px">
+		            <li>The "Quick Look" section provides a summary of key assessment data.</li>
+		            <li>It includes information on activities, skills assessed, performers, evaluators, and assessment modes.</li>
+		            <li>Use this section to quickly understand participation and assessment distribution.</li>
+		            <li>The assessment mode count represents the total number of entries for each category across all skills and components.</li>
+		            <li>Filters applied on the left-hand side will dynamically update the displayed data.</li>
+		        </ul>
+		    </div>
+		    """,
+		    unsafe_allow_html=True
+		)
+
+
 			columns = list(filtered_data.columns)  # Get column names for filtering
 
 			# Select a column to filter
@@ -386,7 +406,35 @@ try:
 			st.markdown("<hr>", unsafe_allow_html=True)
 
 			st.write("### Skills Overview")
+
+			st.markdown(
+			    """
+			    <div style="
+			        padding: 10px;
+			        background-color: #f7f7f7;
+			        border-radius: 5px;
+			        color: #333;margin-bottom:20px">
+			        <ul style="margin-bottom:0px">
+			            <li>The "Skills Overview" section provides detailed statistics on skills performance.</li>
+			            <li>Three key metrics are displayed: 
+			                <ul>
+			                    <li><b>Duration:</b> The time taken to complete each skill (in seconds).</li>
+			                    <li><b>Score:</b> The evaluation score assigned to each skill (in points).</li>
+			                    <li><b>Attempts:</b> The number of times each skill was performed.</li>
+			                </ul>
+			            </li>
+			            <li>Use this section to compare skills based on execution time, performance scores, and repetition count.</li>
+			            <li>Observe that "count" represents the total number of entries in the dataset.</li>
+			            <li>Filters applied on the left-hand side will dynamically update the displayed data.</li>
+			        </ul>
+			    </div>
+			    """,
+			    unsafe_allow_html=True
+			)
+
 			
+
+
 			col1,col2,col3 = st.columns(3)
 			
 			with col1:
@@ -598,49 +646,93 @@ try:
 																				vd='Attempt(s)')
 
 
-
 			attemps_list = {'skill':[],'value':[]}	
 			
 			for skill in skills:
 				attemps_list['skill'].append(skill)
 				attemps_list['value'].append(round(output_component_attemt[skill]['count'].values[0]))
 
-			
-			# Create the bar chart
-			fig = go.Figure(
-				data=[go.Bar(x=attemps_list['skill'],
-							y=attemps_list['value'],
-							text=attemps_list['value'],  # Add text on bars
-							textposition='outside',  # Always display numbers on top of bars
-							textfont=dict(size=18, color="#000"),
-							marker=dict(
-						color='#04B6E2',  # Custom bar colors
-					))]
+
+			if len(skills) > 1 or (performer != 'All'):
+				st.markdown(
+			    """
+			    <div style="
+			        padding: 10px;
+			        background-color: #f7f7f7;
+			        border-radius: 5px;
+			        color: #333;margin-bottom:20px">
+			        <ul style="margin-bottom:0px">
+			            <li>The "Components Overview" chart displays the number of attempts per skill component.</li>
+			            <li>The x-axis represents different skill components, while the y-axis shows the total number of attempts.</li>
+			            <li>Higher bars indicate more frequent practice of a specific skill component (representing total entries, not necessarily the number of individuals).</li>
+			            <li>Use this chart to quickly identify which components are practiced the most and the least.</li>
+			            <li>Filters applied on the left-hand side will dynamically update the displayed data.</li>
+			        </ul>
+			    </div>
+			    """,
+			    unsafe_allow_html=True
 			)
+				####################################
+				# Create the bar chart
+				fig = go.Figure(
+					data=[go.Bar(x=attemps_list['skill'],
+								y=attemps_list['value'],
+								text=attemps_list['value'],  # Add text on bars
+								textposition='outside',  # Always display numbers on top of bars
+								textfont=dict(size=18, color="#000"),
+								marker=dict(
+							color='#04B6E2',  # Custom bar colors
+						))]
+				)
 
-			# Define o limite superior do eixo Y (2 unidades acima do valor máximo)
-			y_max = max(fig.data[0].y) + 2
+				# Define o limite superior do eixo Y (2 unidades acima do valor máximo)
+				y_max = max(fig.data[0].y) + 2
 
-			# Customize the layout
-			fig.update_layout(
-				title="Attempts General",
-				xaxis_title="",
-				yaxis_title="Count",
-				template="plotly_white",
-				height=600,
-				plot_bgcolor="rgba(0,0,0,0)",  # Make plot background transparent
-				# paper_bgcolor="rgba(0,0,0,0)",  # Make outside background transparent
-				xaxis=dict(showgrid=False),  # Remove x-axis grid lines
-				yaxis=dict(showgrid=False, range=[0, y_max]),  # Remove y-axis grid lines
-			)
+				# Customize the layout
+				fig.update_layout(
+					title="Attempts General",
+					xaxis_title="",
+					yaxis_title="Count",
+					template="plotly_white",
+					height=600,
+					plot_bgcolor="rgba(0,0,0,0)",  # Make plot background transparent
+					# paper_bgcolor="rgba(0,0,0,0)",  # Make outside background transparent
+					xaxis=dict(showgrid=False),  # Remove x-axis grid lines
+					yaxis=dict(showgrid=False, range=[0, y_max]),  # Remove y-axis grid lines
+				)
 
-			# Show the figure
-			# Add the Plotly chart to Streamlit
-			st.plotly_chart(fig)
+				# Show the figure
+				# Add the Plotly chart to Streamlit
+				st.plotly_chart(fig)
+				####################################
 
 
 			for skill in skills:
 				st.write(f"### {skill}")
+
+				st.markdown(
+				    """
+				    <div style="
+				        padding: 10px;
+				        background-color: #f7f7f7;
+				        border-radius: 5px;
+				        color: #333;margin-bottom:20px">
+				        <ul style="margin-bottom:0px">
+				            <li>This section provides a detailed breakdown of the performance for the selected skill.</li>
+				            <li>Each table presents data for individual skill components across three key metrics:</li>
+				            <ul style="margin-top:5px; margin-bottom:5px; padding-left: 20px;">
+				                <li><b>Duration:</b> The time spent executing each component (in seconds).</li>
+				                <li><b>Score:</b> The evaluation score given to each component (higher scores indicate better execution).</li>
+				                <li><b>Attempts:</b> The number of times each component was performed.</li>
+				            </ul>
+				            <li>Use this section to assess which components take longer to complete and which ones receive the highest and lowest scores.</li>
+				            <li>Filters applied on the left-hand side will dynamically update the displayed data.</li>
+				        </ul>
+				    </div>
+				    """,
+				    unsafe_allow_html=True
+				)
+
 
 
 				col1, col2, col3 = st.columns(3)
@@ -794,10 +886,37 @@ try:
 
 				df = filtered_data[(filtered_data['SkillName']==skill)].copy()
 
+				st.markdown(
+				    """
+				    <div style="
+				        padding: 10px;
+				        background-color: #f7f7f7;
+				        border-radius: 5px;
+				        color: #333;margin-bottom:20px">
+				        <ul style="margin-bottom:0px">
+				            <li>This heatmap visualizes the evaluation scores assigned to each component for different performers.</li>
+				            <li>The y-axis represents individual components, while the x-axis represents performers.</li>
+				            <li>The color scale on the right indicates the score range, where:
+				                <ul style="margin-top:5px; margin-bottom:5px; padding-left: 20px;">
+				                    <li><span style="color:#008000;"><b>Green:</b></span> Higher scores (better execution).</li>
+				                    <li><span style="color:#FFD700;"><b>Yellow:</b></span> Moderate scores (room for improvement).</li>
+				                    <li><span style="color:#FF0000;"><b>Red:</b></span> Lower scores (areas that need attention).</li>
+				                </ul>
+				            </li>
+				            <li>Use this chart to compare performance across different components and identify patterns in execution quality.</li>
+				            <li>If a performer has more than one entry, their data will be averaged.</li>
+				            <li>Filters applied on the left-hand side will dynamically update the displayed data.</li>
+				        </ul>
+				    </div>
+				    """,
+				    unsafe_allow_html=True
+				)
+
 				# Pivot the data to create a matrix for the heatmap
 				heatmap_data = df.pivot_table(
 					index="Component Name", columns="PerformerName", values="Score"
 				).round(1)
+
 
 				# Create the heatmap with a custom color scale and show values
 				fig = px.imshow(
@@ -832,6 +951,28 @@ try:
 
 
 				#####################################################
+				st.markdown(
+				    """
+				    <div style="
+				        padding: 10px;
+				        background-color: #f7f7f7;
+				        border-radius: 5px;
+				        color: #333;margin-bottom:20px">
+				        <ul style="margin-bottom:0px">
+				            <li>This chart visualizes the number of attempts per component for multiple performers.</li>
+				            <li>The y-axis lists the components, while the x-axis represents the number of attempts.</li>
+				            <li>Each dot corresponds to a specific performer's attempt count for a given component.</li>
+				            <li>Different colors represent different performers, as indicated in the legend on the right.</li>
+				            <li>Overlapping dots indicate that multiple performers have the same attempt count for a component.</li>
+				            <li>You can click on names in the legend to filter and highlight specific performers.</li>
+				            <li>Use this chart to compare how often different performers practice each component.</li>
+				            <li>Filters applied on the left-hand side will dynamically update the displayed data.</li>
+				        </ul>
+				    </div>
+				    """,
+				    unsafe_allow_html=True
+				)
+
 				# Create the pivot table
 				jitter_data = df.pivot_table(
 					index="Component Name", 
@@ -884,6 +1025,29 @@ try:
 
 
 				#####################################################
+				st.markdown(
+			    """
+			    <div style="
+			        padding: 10px;
+			        background-color: #f7f7f7;
+			        border-radius: 5px;
+			        color: #333;margin-bottom:20px">
+			        <ul style="margin-bottom:0px">
+			            <li>This chart visualizes the duration spent on each component by multiple performers.</li>
+			            <li>The y-axis lists the components, while the x-axis represents the duration (in seconds).</li>
+			            <li>Each dot corresponds to a specific performer’s execution time for a given component.</li>
+			            <li>Different colors represent different performers, as indicated in the legend on the right.</li>
+			            <li>Overlapping dots indicate that multiple performers completed the same component in a similar duration.</li>
+			            <li>You can click on names in the legend to filter and highlight specific performers.</li>
+			            <li>Use this chart to compare execution time across different performers and identify which components take longer to complete.</li>
+			            <li>Filters applied on the left-hand side will dynamically update the displayed data.</li>
+			        </ul>
+			    </div>
+			    """,
+			    unsafe_allow_html=True
+			)
+
+
 				# Create the pivot table
 				jitter_data = df.pivot_table(
 					index="Component Name", 

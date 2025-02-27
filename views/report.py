@@ -353,6 +353,24 @@ try:
 	    max_value=data["Start Time"].max().date()
 	)
 
+	st.markdown(
+	    """
+	    <div style="
+	        padding: 10px;
+	        background-color: #f7f7f7;
+	        border-radius: 5px;
+	        color: #333;margin-bottom:20px">
+	        <ul style="margin-bottom:0px">
+	            <li>This section provides a detailed breakdown of the selected skill's performance.</li>
+	            <li>Each component is displayed with its attempt count, score, execution time, and timestamp.</li>
+	            <li>The list on the left shows detailed records of each attempt, including the exact time and duration.</li>
+	            <li>Filters applied on the left-hand side will dynamically update the displayed data.</li>
+	        </ul>
+	    </div>
+	    """,
+	    unsafe_allow_html=True
+	)
+
 	# Ensure End Date is after Start Date
 	if start_date > end_date:
 	    st.sidebar.error("⚠️ End Date must be after Start Date!")
@@ -404,6 +422,32 @@ try:
 	else:
 		filt2 = filt1[(filt1['SkillName'] == skill)]
 		st.write(f"##### Skill: {skill}")
+
+		st.markdown(
+		    """
+		    <div style="
+		        padding: 10px;
+		        background-color: #f7f7f7;
+		        border-radius: 5px;
+		        color: #333;margin-bottom:20px">
+		        <ul style="margin-bottom:0px">
+		            <li>The list on the left shows detailed records of each attempt, including the exact time and duration.</li>
+		            <li>The chart on the right visualizes attempt scores using a color scale:
+		                <ul style="margin-top:5px; margin-bottom:5px; padding-left: 20px;">
+		                    <li><span style="color:#008000;"><b>Green:</b></span> Higher scores (better execution).</li>
+		                    <li><span style="color:#FFD700;"><b>Yellow:</b></span> Moderate scores (room for improvement).</li>
+		                    <li><span style="color:#FF0000;"><b>Red:</b></span> Lower scores (areas that need attention).</li>
+		                </ul>
+		            </li>
+		            <li>The x-axis represents the attempt time, helping to analyze consistency over time.</li>
+		            <li>Use this section to assess performance trends and identify components that may need additional practice.</li>
+		            <li>The marker size ("circle") represents the attempt duration.</li>
+		            <li>Filters applied on the left-hand side will dynamically update the displayed data.</li>
+		        </ul>
+		    </div>
+		    """,
+		    unsafe_allow_html=True
+		)
 
 	# Check if the filtered data is empty
 	if filt2.empty:
