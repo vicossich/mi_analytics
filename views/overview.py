@@ -171,12 +171,39 @@ try:
 	################################
 
 	st.write("### Overview")
+ 
+	# --- Links fixos (label, anchor) ---
+	links = [
+		("Data Preview", "#data-preview"),
+		("Quick Look", "#quick-look"),
+		("Skills Overview", "#skills-overview"),
+		("Components Overview", "#components-overview"),
+	]
+
+	# Navbar em grade (4 por linha)
+	cols_per_row = 4
+	for i, (label, anchor) in enumerate(links):
+		if i % cols_per_row == 0:
+			cols = st.columns(cols_per_row)
+		col = cols[i % cols_per_row]
+		with col:
+			st.markdown(f'<a class="nav-btn" href="{anchor}">{label}</a>', unsafe_allow_html=True)
+
+		
+
 	try:
 		if filtered_data.empty:
 			st.warning("No data matches the selected filters. Please adjust your filters and try again.")
 		else:
+      		
 			# Display the dataframe in Streamlit
-			st.write("### Data Preview")
+			# st.write("### Data Preview")
+
+			left, right = st.columns([1,.15])
+			with left:
+				st.write("### Data Preview")
+			with right:
+				st.markdown('<div style="text-align:right"><a class="link-btn" href="#overview">↑ overview menu</a></div>', unsafe_allow_html=True)
 
 			# Custom gray message box using Markdown
 			st.markdown(
@@ -202,7 +229,7 @@ try:
 			import io
 
 			# Criar checkboxes abaixo do DataFrame com texto menor
-			st.markdown('<p style="font-size:20px; font-weight:bold;">Select Columns to Include in CSV</p>', unsafe_allow_html=True)
+			st.markdown('<p style="font-size:20px; font-weight:bold">Select Columns to Include in CSV</p>', unsafe_allow_html=True)
 
 
 			# Custom gray message box using Markdown
@@ -299,7 +326,13 @@ try:
 			# st.markdown("<hr>", unsafe_allow_html=True)
 
 			# Filter widgets
-			st.write("### Quick Look")
+			# st.write("### Quick Look")
+			left, right = st.columns([1,.15])
+			with left:
+				st.write("### Quick Look")
+			with right:
+				st.markdown('<div style="text-align:right"><a class="link-btn" href="#overview">↑ overview menu</a></div>', unsafe_allow_html=True)
+
 			
 			st.markdown(
 		    """
@@ -405,8 +438,103 @@ try:
 			# Add a horizontal line
 			st.markdown("<hr>", unsafe_allow_html=True)
 
-			st.write("### Skills Overview")
+			# st.write("### Skills Overview")
+			left, right = st.columns([1,.15])
+			with left:
+				st.write("### Skills Overview")
+			with right:
+				st.markdown('<div style="text-align:right"><a class="link-btn" href="#overview">↑ overview menu</a></div>', unsafe_allow_html=True)
 
+			# CSS: botão e correção do offset quando rolar para a âncora
+			# st.markdown("""
+			# <style>
+			# .nav-btn{display:block;padding:.75rem 1rem;border:1px solid rgba(255,255,255,.15);
+			# border-radius:.75rem;text-align:center;text-decoration:none;font-weight:600}
+			# .nav-btn:hover{background:rgba(255,255,255,.06)}
+			# /* garante que a rolagem pare um pouco abaixo do topo */
+			# [id]{scroll-margin-top:80px}
+			# </style>
+			# """, unsafe_allow_html=True)
+			st.markdown("""
+						<style>
+						:root{
+						--btn-bg: rgba(255,255,255,.04);
+						--btn-brd: rgba(255,255,255,.16);
+						--btn-hover-bg: #4DB5FF;
+						--btn-hover-text: #ffffff;
+						--btn-active: rgba(255,255,255,.12);
+						--btn-text: rgba(255,255,255,.95);
+						--ring: 0 0 0 3px rgba(77,181,255,.35);
+						}
+
+						.nav-btn{
+						display:flex;
+						align-items:center;
+						justify-content:center;
+						gap:.5rem;
+						padding:.75rem 1rem;
+						background:var(--btn-bg);
+						border:1px solid var(--btn-brd);
+						border-radius:.8rem;
+						color:var(--btn-text);
+						text-decoration:none;
+						font-weight:600;
+						box-shadow:0 1px 0 rgba(0,0,0,.2), inset 0 2px 10px rgba(0,0,0,.12);
+						transition:background .15s ease, border-color .15s ease, color .15s ease;
+						user-select:none;
+						}
+
+						/* Hover azul */
+						.nav-btn:hover{
+						background:var(--btn-hover-bg);
+						color:var(--btn-hover-text);
+						text-decoration:none; /* sem underline */
+						border-color:var(--btn-hover-bg);
+						}
+
+						/* Click (active) */
+						.nav-btn:active{
+						background:var(--btn-active);
+						transform:scale(.98);
+						}
+
+						/* Acessibilidade (tab focus) */
+						.nav-btn:focus-visible{
+						outline:none;
+						box-shadow:var(--ring);
+						}
+
+						/* Scroll das âncoras */
+						[id]{scroll-margin-top:100px}
+						</style>
+						""", unsafe_allow_html=True)
+						
+			######--- parse string to archor format
+			import re
+			import unicodedata
+
+			def to_anchor(text: str) -> str:
+				text = unicodedata.normalize('NFKD', text).encode('ascii','ignore').decode('ascii')
+				text = re.sub(r'[^a-z0-9]+','-', text.lower()).strip('-')
+				return f"#{text}"
+
+			# Ex.: sua lista
+			# skills = ["1. Axillary Crutches - Fitting", "2. Step Down - Assessment", "3. TUG - Protocol", ...]
+
+			# Gera anchors
+			anchors = [to_anchor(skill) for skill in skills]
+
+			# Navbar em grade (3 por linha)
+			cols_per_row = 4
+			for i, (label, anchor) in enumerate(zip(skills, anchors)):
+				if i % cols_per_row == 0:
+					cols = st.columns(cols_per_row)
+				col = cols[i % cols_per_row]
+				with col:
+					st.markdown(f'<a class="nav-btn" href="{anchor}">{label}</a>', unsafe_allow_html=True)
+
+   
+			
 			st.markdown(
 			    """
 			    <div style="
@@ -630,8 +758,16 @@ try:
 			# Add a horizontal line
 			st.markdown("<hr>", unsafe_allow_html=True)
 
-			st.write("### Components Overview")
+			# st.write("### Components Overview")
+			left, right = st.columns([1,.15])
+			with left:
+				st.write("### Components Overview")
+			with right:
+				st.markdown('<div style="text-align:right"><a class="link-btn" href="#overview">↑ overview menu</a></div>', unsafe_allow_html=True)
 
+
+			
+   
 			##### --- General by Components
 			# duration 
 			skillNamesList, output_component_duration = general_component_performance(df=filtered_data, 
@@ -706,9 +842,51 @@ try:
 				st.plotly_chart(fig)
 				####################################
 
+			# CSS (pode deixar no topo do app)
+			st.markdown("""
+			<style>
+			.heading-row{
+			display:flex; align-items:center; justify-content:space-between; gap:.75rem;
+			margin:.5rem 0;
+			}
+			.heading-row h3{ margin:0; font-size:1.25rem; line-height:1.2 }
+			.link-btn{
+			padding:.35rem .6rem; border-radius:.5rem; border:1px solid rgba(255,255,255,.16);
+			text-decoration:none; font-weight:600; color:rgba(255,255,255,.95);
+			background:rgba(255,255,255,.04); transition:background .15s ease, color .15s ease, border-color .15s ease;
+			}
+			.link-btn:hover{ background:#4DB5FF; color:#fff; text-decoration:none; border-color:#4DB5FF; }
+			</style>
+			""", unsafe_allow_html=True)
 
-			for skill in skills:
-				st.write(f"### {skill}")
+			# for skill in skills:
+			# 	# st.write(f"### {skill}")
+			# 	# st.markdown(f'<a class="" href="#components-overview-1">menu</a>', unsafe_allow_html=True)
+			# 	left, right = st.columns([1, .15])
+			# 	with left:
+			# 		st.write(f"### {skill}")
+			# 	with right:
+			# 		st.markdown('<div style="text-align:right"><a class="link-btn" href="#components-overview">back to menu</a></div>', unsafe_allow_html=True)
+
+			for skill, anchor in zip(skills, anchors):
+			
+				target_id = anchor.lstrip('#')
+				# st.markdown(
+				# 	f'<h3 id="{target_id}" data-anchor="{target_id}" style="margin:0 0 .5rem 0">{skill}</h3>',
+				# 	unsafe_allow_html=True
+				# )
+				# st.markdown('<div style="text-align:right"><a class="link-btn" href="#components-overview">back to menu</a></div>',
+				# 			unsafe_allow_html=True)
+    
+				left, right = st.columns([1, .15])
+				with left:
+					st.markdown(
+					f'<h3 id="{target_id}" data-anchor="{target_id}" style="margin:0 0 .5rem 0">{skill}</h3>',
+					unsafe_allow_html=True
+				)
+				with right:
+					st.markdown('<div style="text-align:right"><a class="link-btn" href="#skills-overview">↑ skills menu</a></div>', unsafe_allow_html=True)
+
 
 				st.markdown(
 				    """
